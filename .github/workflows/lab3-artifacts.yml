@@ -1,0 +1,61 @@
+name: Lab 3 - Artifacts
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Simulate build and create artifact
+        run: |
+          echo "🔨 Running build..."
+          mkdir -p build
+          echo "This is a fake build artifact from Lab 3" > build/app.txt
+          echo "Listing build directory:"
+          ls -R
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab3-build-output
+          path: build/
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code (optional here)
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lab3-build-output
+          path: build/
+
+      - name: Inspect downloaded artifact
+        run: |
+          echo "📦 Contents of build directory after downloading artifact:"
+          ls -R build
+          echo "Printing content of app.txt:"
+          cat build/app.txt
+
+      - name: Simulate tests using artifact
+        run: |
+          echo "🧪 Running tests against build artifact..."
+          # In a real project, here you might run tests against the built app
+          echo "If build/app.txt exists, we consider tests passed."
+          if [ -f build/app.txt ]; then
+            echo "Artifact found. Tests passed ✅"
+          else
+            echo "Artifact missing. Tests failed ❌"
+            exit 1
+          fi
