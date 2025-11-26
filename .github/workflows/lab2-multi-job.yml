@@ -1,0 +1,36 @@
+name: Lab 2 - Multiple Jobs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Simulate build
+        run: |
+          echo "🔨 Running build step..."
+          mkdir -p build
+          echo "This is a fake build artifact" > build/app.txt
+          echo "Contents of build directory:"
+          ls -R
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Simulate tests
+        run: |
+          echo "🧪 Running tests..."
+          echo "Pretending to run unit tests here..."
+          echo "All tests passed ✅"
